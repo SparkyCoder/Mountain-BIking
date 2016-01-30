@@ -30,7 +30,7 @@ public class RepeatingIntent extends BroadcastReceiver {
         AlarmManager am =(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, RepeatingIntent.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 1, i, 0);
-        am.setExact(AlarmManager.RTC_WAKEUP, 30000, pi);//1000 * 60 *60 * 2, pi);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, 5000, 1000 * 60 * 5, pi);
     }
 
     private void CheckForUpdates(Context context){
