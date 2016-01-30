@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name="com.orm.SugarApp"
@@ -34,13 +34,15 @@
             android:name="VERSION"
             android:value="8" />
 
-        <service android:name=".BLL.Services.BackgroundService" ></service>
+        <service android:name=".BLL.Services.BackgroundService" />
 
         <receiver android:name=".BLL.Services.RepeatingIntent">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".TrailDetails" android:theme="@android:style/Theme.Dialog"></activity>
     </application>
 
 </manifest>

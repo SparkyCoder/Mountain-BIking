@@ -34,6 +34,7 @@ import apps.sparky.dallasmountainbiking.Objects.OnClickParameters;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 import apps.sparky.dallasmountainbiking.Objects.TrailHolder;
 import apps.sparky.dallasmountainbiking.R;
+import apps.sparky.dallasmountainbiking.TrailDetails;
 
 /**
  * Created by david.kobuszewski on 1/18/2016.
@@ -156,6 +157,15 @@ public class TrailAdapter extends ArrayAdapter<Trail> implements Filterable {
             holder.imgFavorite.setVisibility(View.GONE);
         else
             holder.imgFavorite.setVisibility(View.VISIBLE);
+
+
+        row.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(context, TrailDetails.class);
+                intent.putExtra("details", trails[position].getTrailDesc());
+                context.startActivity(intent);
+            }
+        });
 
         holder.imgGps.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
