@@ -1,0 +1,91 @@
+{
+  "project_info": {
+    "project_id": "dallasmountainbiking",
+    "project_number": "734719629014",
+    "name": "DallasMountainBiking"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734719629014:android:3201381a82813622",
+        "client_id": "android:apps.sparky.dallasmountainbiking",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "apps.sparky.dallasmountainbiking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734719629014-r9osr6hsqa69t4nl019374h40ch97ir4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "apps.sparky.dallasmountainbiking",
+            "certificate_hash": "5789517387A8299C1357EDF9ED80A4AD9F577088"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734719629014:android:5ea346b57d4d6bae",
+        "client_id": "android:apps.sparky.dallasmountainbiking2",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "apps.sparky.dallasmountainbiking2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734719629014-m32rnlicoovf4daq5eh17e1admp7cbsv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "apps.sparky.dallasmountainbiking2",
+            "certificate_hash": "5789517387A8299C1357EDF9ED80A4AD9F577088"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

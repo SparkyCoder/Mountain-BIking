@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:src="@drawable/background"
+        android:scaleType = "centerCrop"/>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:id="@+id/imgGpsStatus"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/searching" />
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/imgGpsStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:id="@+id/txtGpsStatus" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgGpsStatus"
+        android:layout_marginTop="30dp">
+
+    <EditText
+        android:id="@+id/trail_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:textColor="#9b9b9b"
+        android:textColorHint="#9b9b9b"
+        android:hint="@string/Search"
+        android:inputType="text"
+        android:textSize="25dp"
+        android:maxLines="1" />
+
+    <ListView
+        android:layout_below="@id/trail_search"
+        android:id="@+id/TrailsList"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+</FrameLayout>

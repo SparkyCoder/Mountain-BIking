@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/login"
+            android:icon="@drawable/plus"
+            android:checked="false"
+            android:title="Login" />
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/exit"
+            android:visible="false"
+            android:title="Logout" />
+    </group>
+
+    <item android:title="Menu">
+        <menu>
+            <item
+                android:id="@+id/customTrails"
+                android:icon="@drawable/trails"
+                app:actionLayout="@layout/switch_layout"
+                android:title="Trails" />
+            <item
+                android:id="@+id/trails"
+                android:icon="@drawable/trails"
+                android:title="Trails" />
+        </menu>
+    </item>
+
+</menu>
