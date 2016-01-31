@@ -290,9 +290,9 @@ if(favorites == null || userID == null)
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             exceptionHandling.ShowToast("Permission Denied For Location");
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-        isProviderEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        isProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if(isProviderEnabled) {
             imgGpsStatus.setImageResource(R.drawable.searching);

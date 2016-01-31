@@ -6,6 +6,7 @@ import java.util.List;
 
 import apps.sparky.dallasmountainbiking.Objects.DmbUser;
 import apps.sparky.dallasmountainbiking.Objects.Favorites;
+import apps.sparky.dallasmountainbiking.Objects.IntervalSetting;
 import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 
@@ -22,6 +23,20 @@ public class DAO {
     public List<DmbUser> GetUser() {
         try {
             return DmbUser.listAll(DmbUser.class);
+        } catch (SQLiteException ex) {
+            String message = ex.getMessage();
+        }
+        return null;
+    }
+
+    public IntervalSetting GetIntervalSettings() {
+        try {
+            List<IntervalSetting> results = IntervalSetting.find(IntervalSetting.class, "interval_setting = ?", "BackgroundService");
+
+            if(results.size() == 1)
+                return results.get(0);
+            else
+                return null;
         } catch (SQLiteException ex) {
             String message = ex.getMessage();
         }

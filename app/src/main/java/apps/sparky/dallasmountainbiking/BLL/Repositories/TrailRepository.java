@@ -2,6 +2,7 @@ package apps.sparky.dallasmountainbiking.BLL.Repositories;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +15,7 @@ import apps.sparky.dallasmountainbiking.BLL.Adapters.TrailAdapter;
 import apps.sparky.dallasmountainbiking.BLL.Exceptions.ExceptionHandling;
 import apps.sparky.dallasmountainbiking.BLL.Parsers.TrailsParser;
 import apps.sparky.dallasmountainbiking.Fragments.TrailsFragment;
+import apps.sparky.dallasmountainbiking.MainActivity;
 import apps.sparky.dallasmountainbiking.Objects.DorbaUrls;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 import apps.sparky.dallasmountainbiking.R;
@@ -26,6 +28,7 @@ public final class TrailRepository extends AsyncTask<Void, Void, Trail[]>{
     //Should Never Be Accessed Within doInBackground
     public String userID;
     public ListFragment fragment;
+    public Context mainActivity;
     public Activity activity;
     public Boolean isFinished;
     public Trail[] result;
@@ -53,7 +56,7 @@ public final class TrailRepository extends AsyncTask<Void, Void, Trail[]>{
 
         this.isFinished = true;
         this.result = result;
-        ((TrailsFragment)fragment).trails = result;
+        ((MainActivity)mainActivity).trails = result;
 
         if (CheckForErrors()) UpdateUI();
 
@@ -108,17 +111,22 @@ public final class TrailRepository extends AsyncTask<Void, Void, Trail[]>{
     }
 
     public void UpdateUI() {
-        if (this.activity != null && !isCancelled()) {
+        try {
+            if (this.activity != null && !isCancelled()) {
 
 
-            filterText = (EditText) activity.findViewById(R.id.trail_search);
-            filterText.addTextChangedListener(filterTextWatcher);
+                filterText = (EditText) activity.findViewById(R.id.trail_search);
+                filterText.addTextChangedListener(filterTextWatcher);
 
-            ListView listView = (ListView) activity.findViewById(R.id.TrailsList);
-            adapter = new TrailAdapter(activity, R.layout.custom_trail_listview_template, result);
-            adapter.userID = userID;
-            adapter.favoritesOnly = favoritesOnly;
-            listView.setAdapter(adapter);
+                ListView listView = (ListView) activity.findViewById(R.id.TrailsList);
+                adapter = new TrailAdapter(activity, R.layout.custom_trail_listview_template, result);
+                adapter.userID = userID;
+                adapter.favoritesOnly = favoritesOnly;
+                listView.setAdapter(adapter);
+            }
+        }
+        catch (Exception ex){
+
         }
     }
 

@@ -3,6 +3,7 @@ package apps.sparky.dallasmountainbiking.Fragments;
 import android.app.Dialog;
 import android.app.ListFragment;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,34 +20,15 @@ import apps.sparky.dallasmountainbiking.R;
 public class TrailsFragment extends ListFragment  {
     private ExceptionHandling exceptionHandler;
     private TrailRepository trailrep;
-    private String userID;
-    public Trail[] trails;
     private Dialog dialog;
-    private Boolean favoritesOn;
+    public Trail[] trails;
+    public String userID;
+    public Boolean favoritesOn;
+    public Context mainActivity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(savedInstanceState != null && savedInstanceState.containsKey("trails"))
-            trails = (Trail[])savedInstanceState.getParcelableArray("trails");
-        if(savedInstanceState != null && savedInstanceState.containsKey("userID"))
-            userID = savedInstanceState.getString("userID");
-        if(savedInstanceState != null && savedInstanceState.containsKey("favorites"))
-            favoritesOn = savedInstanceState.getBoolean("favorites");
-
         return inflater.inflate(R.layout.fragment_trails, container, false);
-    }
-
-    public void SetupVars(String userID, Boolean favoritesOn){
-        this.userID = userID;
-        this.favoritesOn = favoritesOn;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedState) {
-        savedState.putParcelableArray("trails", trails);
-        savedState.putString("userID", userID);
-        savedState.putBoolean("favorites", favoritesOn);
-        super.onSaveInstanceState(savedState);
     }
 
     @Override
@@ -60,7 +42,7 @@ public class TrailsFragment extends ListFragment  {
 
             Initialize();
 
-            PopulateTrails();
+            PopulateTrails(userID, favoritesOn, trails, mainActivity);
 
             CloseDialog();
 
@@ -87,7 +69,7 @@ public class TrailsFragment extends ListFragment  {
     }
 
     @SuppressWarnings("deprecation")
-    public void PopulateTrails()  {
+    public void PopulateTrails(String userID, Boolean favoritesOn, Trail[] trails, Context mainActivity)  {
         try {
             if (favoritesOn == null)
                 favoritesOn = false;
@@ -95,14 +77,13 @@ public class TrailsFragment extends ListFragment  {
             trailrep = new TrailRepository();
             trailrep.userID = userID;
             trailrep.favoritesOnly = favoritesOn;
+            trailrep.mainActivity = mainActivity;
             trailrep.fragment = this;
-            trailrep.activity = getActivity();
+            trailrep.activity = this.getActivity();
             trailrep.trailParser = new TrailsParser();
             trailrep.urls = new DorbaUrls();
             trailrep.error = new ExceptionHandling(getActivity());
-
-            if (trails != null)
-                trailrep.result = trails;
+            trailrep.result = trails;
 
             trailrep.execute();
         } catch (Exception ex) {

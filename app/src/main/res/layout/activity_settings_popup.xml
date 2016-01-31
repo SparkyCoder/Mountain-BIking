@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    tools:context="apps.sparky.dallasmountainbiking.SettingsPopupActivity">
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:text="Trail Update Validation Interval"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="10dp"
+        android:text="The interval in which the background service checks for trail updates. This is how you get your notifications."
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/settingsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/lowInterval"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 Hour Interval" />
+
+        <RadioButton
+            android:id="@+id/mediumInterval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:text="5 Hour Interval"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/highInterval"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 Hour Interval" />
+
+    </RadioGroup>
+
+</LinearLayout>

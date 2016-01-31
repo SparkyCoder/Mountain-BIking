@@ -1,17 +1,17 @@
 package apps.sparky.dallasmountainbiking.BLL.Repositories;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
-
 import java.util.List;
 
+import apps.sparky.dallasmountainbiking.BLL.Exceptions.ExceptionHandling;
 import apps.sparky.dallasmountainbiking.BLL.Parsers.TrailsParser;
 import apps.sparky.dallasmountainbiking.DAL.DAO;
 import apps.sparky.dallasmountainbiking.Objects.DorbaUrls;
-import apps.sparky.dallasmountainbiking.Objects.Favorites;
 import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 import apps.sparky.dallasmountainbiking.R;
@@ -41,19 +41,22 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
 
             return trailsParser.FromJson(rawData);
         }catch (Exception ex){
-         return null;
+          return null;
         }
     }
 
     @Override
     protected void onPostExecute(Trail[] result) {
 
-        List<SugarTrail> savedTrails = dao.GetTrails();
+        if(result == null)
+            return;
 
-       if(savedTrails == null || dao.GetTrails().size() == 0)
-           SaveTrails(result);
-        else
-           CheckForUpdateTrails(result);
+    List<SugarTrail> savedTrails = dao.GetTrails();
+
+    if (savedTrails == null || dao.GetTrails().size() == 0)
+        SaveTrails(result);
+    else
+        CheckForUpdateTrails(result);
     }
 
     private void SaveTrails(Trail[] result){
@@ -69,10 +72,17 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
 
             if(savedTrail != null)
             {
-                if(!savedTrail.currentStatus.equals(trail.getCurrentStatus()))
+                if(!savedTrail.currentStatus.equals(trail.getCurrentStatus())) {
                     SendUpdate(trail.getTrailName(), trail.getCurrentStatus());
+                    UpdateTrail(trail, savedTrail);
+                }
             }
         }
+    }
+
+    private void UpdateTrail(Trail trail, SugarTrail savedTrail){
+        savedTrail.currentStatus = trail.getCurrentStatus();
+        savedTrail.save();
     }
 
     private void SendUpdate(String trailName, String currentStatus){
@@ -87,10 +97,8 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setContentTitle("Trail Update")
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText("Service Started"))
                         .setContentText(trailName+" is "+status)
-                        .setSmallIcon(R.drawable.ic_launcher);
+                        .setSmallIcon(R.drawable.notification);
 
         final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(001, mBuilder.build());

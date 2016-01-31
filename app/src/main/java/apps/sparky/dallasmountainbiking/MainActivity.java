@@ -2,6 +2,7 @@ package apps.sparky.dallasmountainbiking;
 
 import android.app.ActivityManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -28,8 +31,10 @@ import apps.sparky.dallasmountainbiking.BLL.Setup.ToolbarSetup;
 import apps.sparky.dallasmountainbiking.DAL.DAO;
 import apps.sparky.dallasmountainbiking.Fragments.TrailsFragment;
 import apps.sparky.dallasmountainbiking.Objects.DmbUser;
+import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
+import apps.sparky.dallasmountainbiking.Objects.Trail;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
     SignInActivity google;
     String userID;
     ToolbarSetup toolbar;
@@ -41,15 +46,17 @@ public class MainActivity extends AppCompatActivity  {
     ExceptionHandling exceptionHandling;
     SwitchCompat toggle;
     Boolean screenOrientationJustChanged;
+    public Trail[] trails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if(savedInstanceState != null && savedInstanceState.containsKey("favorites"))
+        if(savedInstanceState != null && savedInstanceState.containsKey("trails"))
+            trails = (Trail[])savedInstanceState.getParcelableArray("trails");
+        if (savedInstanceState != null && savedInstanceState.containsKey("favorites"))
             favoritesOn = savedInstanceState.getBoolean("favorites");
-        if(savedInstanceState != null && savedInstanceState.containsKey("userID"))
+        if (savedInstanceState != null && savedInstanceState.containsKey("userID"))
             userID = savedInstanceState.getString("userID");
 
         this.screenOrientationJustChanged = true;
@@ -64,8 +71,8 @@ public class MainActivity extends AppCompatActivity  {
         exceptionHandling = new ExceptionHandling(this);
         menu = new MenuSetup(this, google, toolbar.drawerLayout);
 
-        if(favoritesOn == null)
-        favoritesOn = false;
+        if (favoritesOn == null)
+            favoritesOn = false;
 
         menu.HideCustomTrails();
         SetupMenuClickEvents();
@@ -74,20 +81,20 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void StartBackgroundService() {
-       // BackgroundServiceRepository serviceRepository = new BackgroundServiceRepository(this);
-       // serviceRepository.execute();
-        //this.startService(new Intent(this, BackgroundService.class));
+        if(!IsBackGroundServiceRunning())
+            this.startService(new Intent(this, BackgroundService.class));
     }
 
-    private void CheckForAuthenticatedUser(){
+    private void CheckForAuthenticatedUser() {
         List<DmbUser> users = dao.GetUser();
 
-        if(users != null && users.size() > 0){
+        if (users != null && users.size() > 0) {
             RegisterUser(users.get(0));
-        }
-        else {
+            InitializeTrailsFragment();
+        } else {
             fragmentBundle = null;
             InitializeTrailsFragment();
+
         }
     }
 
@@ -99,11 +106,13 @@ public class MainActivity extends AppCompatActivity  {
             if (result.isSuccess()) {
                 GoogleSignInAccount acct = result.getSignInAccount();
 
-                if(acct!=null && acct.getPhotoUrl() != null)
-                RegisterUser(new DmbUser(acct.getId(), acct.getDisplayName(), acct.getPhotoUrl().toString(), acct.getEmail()));
-            }
-            else
+                if (acct != null && acct.getPhotoUrl() != null && userID == null)
+                    RegisterUser(new DmbUser(acct.getId(), acct.getDisplayName(), acct.getPhotoUrl().toString(), acct.getEmail()));
+
+            } else
                 UnRegisterUser();
+
+            InitializeTrailsFragment();
         }
     }
 
@@ -118,13 +127,10 @@ public class MainActivity extends AppCompatActivity  {
         toggle.setChecked(false);
 
         trailsFrag = null;
-        InitializeTrailsFragment();
-        trailsFrag.PopulateTrails();
     }
 
     private void RegisterUser(DmbUser user) {
-        this.userID = user.UserIdentification;
-
+        userID = user.UserIdentification;
         favoritesOn = true;
         toggle.setChecked(true);
 
@@ -134,26 +140,25 @@ public class MainActivity extends AppCompatActivity  {
         menu.HideLogin();
         menu.ShowCustomTrails();
 
-            List<DmbUser> users = dao.GetUser();
+        List<DmbUser> users = dao.GetUser();
 
-            if(users == null || users.size() == 0) {
-                dao.AddNewUser(user.UserIdentification, user.Name, user.ProfilePictureUrl, user.Email);
-            }
-
-        InitializeTrailsFragment();
-
-        if(!screenOrientationJustChanged)
-        trailsFrag.PopulateTrails();
+        if (users == null || users.size() == 0) {
+            dao.AddNewUser(user.UserIdentification, user.Name, user.ProfilePictureUrl, user.Email);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         savedState.putBoolean("favorites", favoritesOn);
 
-        if(userID !=null)
-        savedState.putString("userID", userID);
+        if (userID != null)
+            savedState.putString("userID", userID);
+
+        if (trails != null)
+            savedState.putParcelableArray("trails", trails);
 
         super.onSaveInstanceState(savedState);
+
     }
 
     private void InitializeTrailsFragment() {
@@ -165,19 +170,22 @@ public class MainActivity extends AppCompatActivity  {
 
             trailsFrag = new TrailsFragment();
 
-            trailsFrag.SetupVars(userID, favoritesOn);
-
             transaction.replace(R.id.content, trailsFrag, "trail");
             transaction.addToBackStack("trail");
-
         }
         else {
-            trailsFrag.SetupVars(userID, favoritesOn);
-
             transaction.replace(R.id.content, trailsFrag, "trail");;
         }
 
+        trailsFrag.userID = userID;
+        trailsFrag.favoritesOn = favoritesOn;
+        trailsFrag.trails = trails;
+        trailsFrag.mainActivity = this;
+
         transaction.commit();
+
+            if(trailsFrag.getView() != null)
+            trailsFrag.PopulateTrails(userID, favoritesOn, trails, this);
     }
 
     private void SetupMenuClickEvents(){
@@ -192,9 +200,8 @@ public class MainActivity extends AppCompatActivity  {
             toggle.toggle();
         }
 
-        toggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(toggle.isChecked()) {
                     favoritesOn = true;
                 }
@@ -202,12 +209,7 @@ public class MainActivity extends AppCompatActivity  {
                     favoritesOn = false;
                 }
 
-                trailsFrag = (TrailsFragment)getFragmentManager().findFragmentByTag("trail");
-
-                if(trailsFrag!= null) {
-                    trailsFrag.SetupVars(userID, favoritesOn);
-                    trailsFrag.PopulateTrails();
-                }
+                InitializeTrailsFragment();
 
                 screenOrientationJustChanged = false;
             }
@@ -225,13 +227,15 @@ public class MainActivity extends AppCompatActivity  {
                         google.SignIn();
                         return true;
                     case R.id.logout:
-
                         UnRegisterUser();
+                        InitializeTrailsFragment();
                         return true;
                     case R.id.customTrails:
                         menu.drawer.closeDrawers();
                         return true;
                     case R.id.trails:
+                        menu.drawer.closeDrawers();
+                        return true;
                     default:
                         menu.drawer.closeDrawers();
                 }
@@ -243,19 +247,28 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
-    private boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent intent = new Intent(this, SettingsPopupActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private Boolean IsBackGroundServiceRunning(){
+        return  (PendingIntent.getBroadcast(getApplicationContext(), 0,
+                new Intent(getApplicationContext(), RepeatingIntent.class),
+                PendingIntent.FLAG_NO_CREATE) != null);
     }
 }
