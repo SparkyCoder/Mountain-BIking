@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:textColor="#000000"
             android:text="5 Hour Interval"
-            android:checked="true" />
+            />
 
         <RadioButton
             android:id="@+id/highInterval"
