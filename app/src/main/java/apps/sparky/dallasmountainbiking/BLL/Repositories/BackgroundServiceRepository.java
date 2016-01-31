@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import java.util.List;
+import java.util.Random;
 
 import apps.sparky.dallasmountainbiking.BLL.Exceptions.ExceptionHandling;
 import apps.sparky.dallasmountainbiking.BLL.Parsers.TrailsParser;
@@ -72,8 +73,9 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
 
             if(savedTrail != null)
             {
+                Random random = new Random();
                 if(!savedTrail.currentStatus.equals(trail.getCurrentStatus())) {
-                    SendUpdate(trail.getTrailName(), trail.getCurrentStatus());
+                    SendUpdate(trail.getTrailName(), trail.getCurrentStatus(), (trail.getTrailId() == null)? Integer.parseInt(trail.getTrailId()) : random.nextInt());
                     UpdateTrail(trail, savedTrail);
                 }
             }
@@ -85,7 +87,7 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
         savedTrail.save();
     }
 
-    private void SendUpdate(String trailName, String currentStatus){
+    private void SendUpdate(String trailName, String currentStatus, int trailID){
         String status;
 
         if(currentStatus.equals("1"))
@@ -101,6 +103,6 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
                         .setSmallIcon(R.drawable.notification);
 
         final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(001, mBuilder.build());
+        manager.notify(trailID, mBuilder.build());
     }
 }
