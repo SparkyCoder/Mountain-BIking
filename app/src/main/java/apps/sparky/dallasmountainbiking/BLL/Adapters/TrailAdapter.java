@@ -251,8 +251,6 @@ if(favorites == null || userID == null)
 
 
     private void SetupLocation(final Context context) {
-        final ImageView imgGpsStatus = ((ImageView)((Activity)context).getWindow().getDecorView().findViewById(R.id.imgGpsStatus));
-        final TextView txtGpsStatus = ((TextView)((Activity)context).getWindow().getDecorView().findViewById(R.id.txtGpsStatus));
         final LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         hasDisplayedAlert = false;
@@ -260,10 +258,6 @@ if(favorites == null || userID == null)
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                networkLocation = location;
-                if(networkLocation != null) {
-                    imgGpsStatus.setImageResource(R.drawable.found);
-                    txtGpsStatus.setText("Location Acquired");
-                }
 
                 if(!hasDisplayedAlert && networkLocation != null) {
                     hasDisplayedAlert = true;
@@ -275,13 +269,9 @@ if(favorites == null || userID == null)
 
             public void onProviderEnabled(String provider) {
                 isProviderEnabled = true;
-                imgGpsStatus.setImageResource(R.drawable.searching);
-                txtGpsStatus.setText("Searching...");
             }
 
             public void onProviderDisabled(String provider) {
-                imgGpsStatus.setImageResource(R.drawable.disconnected);
-                txtGpsStatus.setText("GPS Disconnected");
                 isProviderEnabled = false;
                 hasDisplayedAlert = false;
             }
@@ -293,15 +283,6 @@ if(favorites == null || userID == null)
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
         isProviderEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if(isProviderEnabled) {
-            imgGpsStatus.setImageResource(R.drawable.searching);
-            txtGpsStatus.setText("Searching...");
-        }
-        else {
-            imgGpsStatus.setImageResource(R.drawable.disconnected);
-            txtGpsStatus.setText("GPS Disconnected");
-        }
     }
 }
 

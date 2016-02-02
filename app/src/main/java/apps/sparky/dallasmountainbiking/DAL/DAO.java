@@ -7,6 +7,7 @@ import java.util.List;
 import apps.sparky.dallasmountainbiking.Objects.DmbUser;
 import apps.sparky.dallasmountainbiking.Objects.Favorites;
 import apps.sparky.dallasmountainbiking.Objects.IntervalSetting;
+import apps.sparky.dallasmountainbiking.Objects.NotificationSettings;
 import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 
@@ -32,6 +33,20 @@ public class DAO {
     public IntervalSetting GetIntervalSettings() {
         try {
             List<IntervalSetting> results = IntervalSetting.find(IntervalSetting.class, "interval_setting = ?", "BackgroundService");
+
+            if(results.size() == 1)
+                return results.get(0);
+            else
+                return null;
+        } catch (SQLiteException ex) {
+            String message = ex.getMessage();
+        }
+        return null;
+    }
+
+    public NotificationSettings GetNotificationSettings() {
+        try {
+            List<NotificationSettings> results = NotificationSettings.listAll(NotificationSettings.class);
 
             if(results.size() == 1)
                 return results.get(0);
@@ -70,6 +85,21 @@ public class DAO {
     public List<Favorites> GetFavorites(){
         try {
             return Favorites.listAll(Favorites.class);
+        } catch (SQLiteException ex) {
+            String message = ex.getMessage();
+        }
+        return null;
+    }
+
+    public Favorites GetFavoritesByID(String trailID) {
+        try {
+            List<Favorites> results = SugarTrail.find(Favorites.class, "trail_id = ?", trailID);
+
+            if(results.size() == 1)
+                return results.get(0);
+            else
+                return null;
+
         } catch (SQLiteException ex) {
             String message = ex.getMessage();
         }

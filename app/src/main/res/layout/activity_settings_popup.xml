@@ -14,15 +14,7 @@
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textSize="20dp"
-        android:text="Trail Update Validation Interval"
-        android:textStyle="bold" />
-    <TextView
-        android:layout_marginTop="10dp"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:textSize="10dp"
-        android:text="The interval in which the background service checks for trail updates. This is how you get your notifications."
+        android:text="Check For Updates Every:"
         android:textStyle="bold" />
 
     <RadioGroup
@@ -51,6 +43,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1 Hour Interval" />
+
+    </RadioGroup>
+
+
+    <TextView
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:text="Get Push Notifications For:"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/notificationsGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/allTrailNotifications"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All Trails" />
+
+        <RadioButton
+            android:id="@+id/favoritedTrailNotificaions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:text="Favorited Trails"
+            />
+
+        <RadioButton
+            android:id="@+id/noPushNotifications"
+            android:textColor="#000000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I Don't Want Notifications" />
 
     </RadioGroup>
 

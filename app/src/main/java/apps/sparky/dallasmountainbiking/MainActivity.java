@@ -2,6 +2,7 @@ package apps.sparky.dallasmountainbiking;
 
 import android.app.ActivityManager;
 import android.app.FragmentTransaction;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -20,6 +22,8 @@ import android.widget.CompoundButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.Status;
+
 import java.util.List;
 import apps.sparky.dallasmountainbiking.BLL.Exceptions.ExceptionHandling;
 import apps.sparky.dallasmountainbiking.BLL.Login.SignInActivity;
@@ -109,8 +113,10 @@ public class MainActivity extends AppCompatActivity {
                 if (acct != null && acct.getPhotoUrl() != null && userID == null)
                     RegisterUser(new DmbUser(acct.getId(), acct.getDisplayName(), acct.getPhotoUrl().toString(), acct.getEmail()));
 
-            } else
+            } else {
                 UnRegisterUser();
+                exceptionHandling.ShowToast("Login Failed: "+result.getStatus().getStatusMessage()+ " Code: "+result.getStatus().getStatusCode());
+            }
 
             InitializeTrailsFragment();
         }
@@ -259,6 +265,17 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings:
                 Intent intent = new Intent(this, SettingsPopupActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.refresh:
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                trailsFrag = new TrailsFragment();
+                trailsFrag.userID = userID;
+                trailsFrag.favoritesOn = favoritesOn;
+                trailsFrag.trails = null;
+                trailsFrag.mainActivity = this;
+                transaction.replace(R.id.content, trailsFrag, "trail");
+                transaction.addToBackStack("trail");
+                transaction.commit();
                 return true;
 
             default:

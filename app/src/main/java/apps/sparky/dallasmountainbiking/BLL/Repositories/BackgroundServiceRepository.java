@@ -13,6 +13,9 @@ import apps.sparky.dallasmountainbiking.BLL.Exceptions.ExceptionHandling;
 import apps.sparky.dallasmountainbiking.BLL.Parsers.TrailsParser;
 import apps.sparky.dallasmountainbiking.DAL.DAO;
 import apps.sparky.dallasmountainbiking.Objects.DorbaUrls;
+import apps.sparky.dallasmountainbiking.Objects.Favorites;
+import apps.sparky.dallasmountainbiking.Objects.NotificationSettingValues;
+import apps.sparky.dallasmountainbiking.Objects.NotificationSettings;
 import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 import apps.sparky.dallasmountainbiking.R;
@@ -73,9 +76,11 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
 
             if(savedTrail != null)
             {
+                String trailId = savedTrail.trailId;
+
                 Random random = new Random();
                 if(!savedTrail.currentStatus.equals(trail.getCurrentStatus())) {
-                    SendUpdate(trail.getTrailName(), trail.getCurrentStatus(), (trail.getTrailId() == null)? Integer.parseInt(trail.getTrailId()) : random.nextInt());
+                    SendUpdate(trail.getTrailName(), trail.getCurrentStatus(), (trailId != null) ? Integer.parseInt(trailId) : random.nextInt());
                     UpdateTrail(trail, savedTrail);
                 }
             }
@@ -87,22 +92,51 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
         savedTrail.save();
     }
 
+    private Boolean ShouldSendUpdate(String trailId){
+        NotificationSettings notificationSettings = dao.GetNotificationSettings();
+
+
+        if(notificationSettings == null)
+            return true;
+        if(notificationSettings.preference.equals(NotificationSettingValues.Preferences.FAVORITES.toString()))
+            return isFavorite(trailId);
+        if(notificationSettings.preference.equals(NotificationSettingValues.Preferences.NEVER.toString()))
+            return false;
+
+        return true;
+    }
+
+    private Boolean isFavorite(String trailId){
+
+        Boolean isFav = false;
+        Favorites favorites = dao.GetFavoritesByID(trailId);
+
+        if(favorites != null) {
+            return true;
+        }
+
+        return isFav;
+    }
+
     private void SendUpdate(String trailName, String currentStatus, int trailID){
-        String status;
 
-        if(currentStatus.equals("1"))
-            status = "Open";
-        else
-            status = "Closed";
+        if(ShouldSendUpdate(Integer.toString(trailID))) {
+            String status;
+
+            if (currentStatus.equals("1"))
+                status = "Open";
+            else
+                status = "Closed";
 
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(context)
-                        .setContentTitle("Trail Update")
-                        .setContentText(trailName+" is "+status)
-                        .setSmallIcon(R.drawable.notification);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(context)
+                            .setContentTitle("Trail Update")
+                            .setContentText(trailName + " is " + status)
+                            .setSmallIcon(R.drawable.trailswhite);
 
-        final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(trailID, mBuilder.build());
+            final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(trailID, mBuilder.build());
+        }
     }
 }

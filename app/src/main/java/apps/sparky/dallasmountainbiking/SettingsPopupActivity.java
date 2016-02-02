@@ -13,6 +13,8 @@ import apps.sparky.dallasmountainbiking.BLL.Services.BackgroundService;
 import apps.sparky.dallasmountainbiking.BLL.Services.RepeatingIntent;
 import apps.sparky.dallasmountainbiking.DAL.DAO;
 import apps.sparky.dallasmountainbiking.Objects.IntervalSetting;
+import apps.sparky.dallasmountainbiking.Objects.NotificationSettingValues;
+import apps.sparky.dallasmountainbiking.Objects.NotificationSettings;
 
 public class SettingsPopupActivity extends Activity {
     private DAO dao;
@@ -35,25 +37,43 @@ private ExceptionHandling exceptionHandling;
 
     private void SetupDefaultSelectedButton() {
         RadioGroup settings = (RadioGroup) findViewById(R.id.settingsGroup);
+        RadioGroup notificationsSettings = (RadioGroup) findViewById(R.id.notificationsGroup);
 
         IntervalSetting currentSetting = dao.GetIntervalSettings();
+        NotificationSettings currentNotificationsSetting = dao.GetNotificationSettings();
 
         if (currentSetting == null) {
             settings.check(R.id.mediumInterval);
         }
-        if (currentSetting.intervalValue == 1000 * 60 * 60 * 10) {
+        else if (currentSetting.intervalValue == 1000 * 60 * 60 * 10) {
             settings.check(R.id.lowInterval);
         }
-        if (currentSetting.intervalValue == 1000 * 60 * 60 * 1) {
+        else if (currentSetting.intervalValue == 1000 * 60 * 60 * 1) {
             settings.check(R.id.highInterval);
         }
-        if (currentSetting.intervalValue == 1000 * 60 * 60 * 5) {
+        else if (currentSetting.intervalValue == 1000 * 60 * 60 * 5) {
             settings.check(R.id.mediumInterval);
+        }
+
+
+
+        if (currentNotificationsSetting == null) {
+            notificationsSettings.check(R.id.favoritedTrailNotificaions);
+        }
+        else if (currentNotificationsSetting.preference.equals(NotificationSettingValues.Preferences.ALL.toString())) {
+            notificationsSettings.check(R.id.allTrailNotifications);
+        }
+        else if (currentNotificationsSetting.preference.equals(NotificationSettingValues.Preferences.FAVORITES.toString())) {
+            notificationsSettings.check(R.id.favoritedTrailNotificaions);
+        }
+        else if (currentNotificationsSetting.preference.equals(NotificationSettingValues.Preferences.NEVER.toString())) {
+            notificationsSettings.check(R.id.noPushNotifications);
         }
     }
 
     private void SetupClicks() {
         final RadioGroup settings = (RadioGroup) findViewById(R.id.settingsGroup);
+        final RadioGroup pushNotifications = (RadioGroup) findViewById(R.id.notificationsGroup);
 
         settings.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -64,7 +84,6 @@ private ExceptionHandling exceptionHandling;
 
                     long value = 1000 * 60 * 60 * 5;
 
-                    RadioButton radiobutton = (RadioButton) findViewById(checkedId);
                     if (checkedId == R.id.highInterval)
                         value = 1000 * 60 * 60 * 1;
                     if (checkedId == R.id.mediumInterval)
@@ -80,6 +99,41 @@ private ExceptionHandling exceptionHandling;
                         currentSetting.intervalValue = value;
                         currentSetting.save();
                     }
+
+                    CancelService();
+                    startService(new Intent(getApplicationContext(), BackgroundService.class));
+                } catch (Exception ex) {
+                    exceptionHandling.ShowToast(ex.getMessage());
+                }
+            }
+        });
+
+
+
+        pushNotifications.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                try {
+                    NotificationSettings currentSetting = dao.GetNotificationSettings();
+
+                    NotificationSettingValues.Preferences value = NotificationSettingValues.Preferences.FAVORITES;
+
+                    if (checkedId == R.id.allTrailNotifications)
+                        value = NotificationSettingValues.Preferences.ALL;
+                        if (checkedId == R.id.favoritedTrailNotificaions)
+                            value = NotificationSettingValues.Preferences.FAVORITES;
+                            if (checkedId == R.id.noPushNotifications)
+                                value = NotificationSettingValues.Preferences.NEVER;
+
+
+                                if (currentSetting == null) {
+                                    NotificationSettings newSetting = new NotificationSettings(value.toString());
+                                    newSetting.save();
+                                } else {
+                                    currentSetting.preference = value.toString();
+                                    currentSetting.save();
+                                }
 
                     CancelService();
                     startService(new Intent(getApplicationContext(), BackgroundService.class));
