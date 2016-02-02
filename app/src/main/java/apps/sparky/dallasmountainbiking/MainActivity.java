@@ -35,6 +35,7 @@ import apps.sparky.dallasmountainbiking.BLL.Setup.ToolbarSetup;
 import apps.sparky.dallasmountainbiking.DAL.DAO;
 import apps.sparky.dallasmountainbiking.Fragments.TrailsFragment;
 import apps.sparky.dallasmountainbiking.Objects.DmbUser;
+import apps.sparky.dallasmountainbiking.Objects.Favorites;
 import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
 import apps.sparky.dallasmountainbiking.Objects.Trail;
 
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     SwitchCompat toggle;
     Boolean screenOrientationJustChanged;
     public Trail[] trails;
+    List<Favorites> favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Initialize() {
+        favorites = null;
         dao = new DAO();
         google = new SignInActivity(this);
         toolbar = new ToolbarSetup(this);
@@ -82,6 +85,13 @@ public class MainActivity extends AppCompatActivity {
         SetupMenuClickEvents();
         CheckForAuthenticatedUser();
         StartBackgroundService();
+    }
+
+    private List<Favorites> GetFavorites(){
+        if(dao != null)
+            return dao.GetFavorites();
+
+        return null;
     }
 
     private void StartBackgroundService() {
@@ -112,10 +122,27 @@ public class MainActivity extends AppCompatActivity {
 
                 if (acct != null && acct.getPhotoUrl() != null && userID == null)
                     RegisterUser(new DmbUser(acct.getId(), acct.getDisplayName(), acct.getPhotoUrl().toString(), acct.getEmail()));
+                else if(acct != null && acct.getId() != null && acct.getDisplayName() != null && acct.getEmail() != null)
+                    RegisterUser(new DmbUser(acct.getId(), acct.getDisplayName(), null, acct.getEmail()));
+                else if (acct != null && acct.getId() != null && acct.getDisplayName() != null)
+                    RegisterUser(new DmbUser(acct.getId(), acct.getDisplayName(), null, null));
 
             } else {
                 UnRegisterUser();
-                exceptionHandling.ShowToast("Login Failed: "+result.getStatus().getStatusMessage()+ " Code: "+result.getStatus().getStatusCode());
+                if(result != null && result.getStatus() != null) {
+                    String errorMessage = result.getStatus().getStatusMessage();
+                    Integer errorCode = result.getStatus().getStatusCode();
+
+                    if(errorMessage != null && errorCode!=null && errorCode != 0)
+                        exceptionHandling.ShowToast("Login Failed - Message: "+errorMessage+" Code: " + errorCode);
+                    else if (errorMessage != null && (errorCode == null || errorCode == 0))
+                        exceptionHandling.ShowToast("Login Failed - Message: "+errorMessage);
+                    else if (errorMessage == null && (errorCode != null || errorCode != 0))
+                        exceptionHandling.ShowToast("Login Failed - Code: " + errorCode);
+                }
+                else {
+                    exceptionHandling.ShowToast("Login Failed");
+                }
             }
 
             InitializeTrailsFragment();
@@ -137,8 +164,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void RegisterUser(DmbUser user) {
         userID = user.UserIdentification;
-        favoritesOn = true;
-        toggle.setChecked(true);
+        favorites = GetFavorites();
+
+        if(favorites!=null && favorites.size() > 0) {
+            favoritesOn = true;
+            toggle.setChecked(true);
+        }        else {
+            favoritesOn = false;
+            toggle.setChecked(false);
+        }
 
         menu.UpdateEmail(user.Email);
         menu.UpdateProfilePicture(user.ProfilePictureUrl);
@@ -201,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         View actionView = MenuItemCompat.getActionView(menuItem);
         toggle = (SwitchCompat)actionView.findViewById(R.id.favoritesSwitch);
 
-        if(userID != null){
+        if(userID != null && favorites != null && favorites.size() > 0){
             favoritesOn = true;
             toggle.toggle();
         }

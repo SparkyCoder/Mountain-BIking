@@ -48,16 +48,20 @@ public class MenuSetup {
     }
 
     public void UpdateName(String name) {
+        if(name != null)
         ((TextView) header.findViewById(R.id.username)).setText(name);
     }
 
     public void UpdateEmail(String email) {
+        if(email != null)
         ((TextView) header.findViewById(R.id.email)).setText(email);
     }
 
     public void UpdateProfilePicture(String imageUrl) {
-        ImageView profilePicture = (ImageView) header.findViewById(R.id.profile_image);
-        Picasso.with(header.getContext()).load(imageUrl).transform(new CircleTransform()).into(profilePicture);
+        if(imageUrl != null) {
+            ImageView profilePicture = (ImageView) header.findViewById(R.id.profile_image);
+            Picasso.with(header.getContext()).load(imageUrl).transform(new CircleTransform()).into(profilePicture);
+        }
     }
 
     public void LoadDefaultProfilePicture() {
