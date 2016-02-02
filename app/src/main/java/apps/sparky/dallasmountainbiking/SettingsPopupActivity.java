@@ -58,7 +58,7 @@ private ExceptionHandling exceptionHandling;
 
 
         if (currentNotificationsSetting == null) {
-            notificationsSettings.check(R.id.favoritedTrailNotificaions);
+            notificationsSettings.check(R.id.allTrailNotifications);
         }
         else if (currentNotificationsSetting.preference.equals(NotificationSettingValues.Preferences.ALL.toString())) {
             notificationsSettings.check(R.id.allTrailNotifications);
