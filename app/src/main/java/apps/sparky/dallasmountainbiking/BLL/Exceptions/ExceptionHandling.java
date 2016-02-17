@@ -26,4 +26,12 @@ public class ExceptionHandling {
 
         toast.show();
     }
+
+    public void ShowSuccessMessage(String message){
+        Toast toast = Toast.makeText(activity, message, Toast.LENGTH_LONG);;
+        View view = toast.getView();
+        view.setBackgroundResource(R.color.green);
+
+        toast.show();
+    }
 }

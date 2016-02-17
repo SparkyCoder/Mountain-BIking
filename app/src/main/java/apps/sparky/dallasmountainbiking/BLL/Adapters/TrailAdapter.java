@@ -109,7 +109,6 @@ public class TrailAdapter extends ArrayAdapter<Trail> implements Filterable {
 
             LayoutInflater inflater = ((AppCompatActivity) context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
-
             holder.txtTrailDescription = (TextView) row.findViewById(R.id.txtTrailDescription);
             holder.txtTitleTrail = (TextView) row.findViewById(R.id.txtTitleTrail);
             holder.txtLastUpdated = (TextView) row.findViewById(R.id.txtLastUpdated);
@@ -162,7 +161,12 @@ public class TrailAdapter extends ArrayAdapter<Trail> implements Filterable {
         row.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(context, TrailDetails.class);
+
                 intent.putExtra("details", trails[position].getTrailDesc());
+                intent.putExtra("userId", userID);
+                intent.putExtra("name", trails[position].getTrailName());
+                intent.putExtra("lat", trails[position].getGeoLat());
+                intent.putExtra("long", trails[position].getGeoLang());
                 context.startActivity(intent);
             }
         });

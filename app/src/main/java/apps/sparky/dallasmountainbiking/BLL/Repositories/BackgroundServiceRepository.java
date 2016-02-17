@@ -108,14 +108,13 @@ public class BackgroundServiceRepository extends AsyncTask<Void, Void, Trail[]> 
 
     private Boolean isFavorite(String trailId){
 
-        Boolean isFav = false;
         Favorites favorites = dao.GetFavoritesByID(trailId);
 
         if(favorites != null) {
             return true;
         }
 
-        return isFav;
+        return false;
     }
 
     private void SendUpdate(String trailName, String currentStatus, int trailID){

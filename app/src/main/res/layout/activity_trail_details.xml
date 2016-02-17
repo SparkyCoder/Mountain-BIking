@@ -10,19 +10,58 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="apps.sparky.dallasmountainbiking.TrailDetails">
 
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginTop="30dp"
         android:orientation="vertical"
         android:fillViewport="false">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="#000000"
-        android:textSize="15dp"
-        android:textStyle="bold"
-        android:id="@+id/txtDetails" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/mapsFragment"
+                android:name="com.google.android.gms.maps.MapFragment" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgCheckIn"
+            android:layout_marginTop="15dp"
+            android:layout_below="@id/mapsFragment"
+            android:layout_centerVertical="true"
+            android:src="@drawable/checkin"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="#000000"
+            android:textSize="15dp"
+            android:text="Check-In to this trail."
+            android:layout_marginTop="40dp"
+            android:layout_below="@id/mapsFragment"
+            android:layout_toRightOf="@id/imgCheckIn"
+            android:textStyle="bold"
+            android:id="@+id/txtCheckInLabel" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="#000000"
+                android:layout_below="@id/imgCheckIn"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:id="@+id/txtDetails" />
+
+</RelativeLayout>
 
     </ScrollView>
 

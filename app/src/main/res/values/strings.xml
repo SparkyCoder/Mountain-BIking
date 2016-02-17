@@ -10,4 +10,7 @@
     <string name="dialog_title_trails">Loading Trails...</string>
     <string name="title_activity_main_content">MainContent</string>
     <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

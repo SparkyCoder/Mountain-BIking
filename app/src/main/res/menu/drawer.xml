@@ -25,6 +25,10 @@
                 android:id="@+id/trails"
                 android:icon="@drawable/trails"
                 android:title="Trails" />
+            <item
+                android:id="@+id/CheckInsMenuItem"
+                android:icon="@drawable/mapblacwhite"
+                android:title="Recent Check-Ins" />
         </menu>
     </item>
 

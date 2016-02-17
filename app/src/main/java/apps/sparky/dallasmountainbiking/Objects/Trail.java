@@ -24,6 +24,7 @@ public class Trail implements Parcelable {
     private String trailName;
     private String twitter;
     private String updateFormatted;
+    private String trailKML;
 
     protected Trail(Parcel in) {
         conditionDesc = in.readString();
@@ -41,6 +42,7 @@ public class Trail implements Parcelable {
         trailName = in.readString();
         twitter = in.readString();
         updateFormatted = in.readString();
+        trailKML = in.readString();
     }
 
     public static final Creator<Trail> CREATOR = new Creator<Trail>() {
@@ -55,6 +57,8 @@ public class Trail implements Parcelable {
         }
     };
 
+    public String getTrailKML(){return this.trailKML;}
+    public void setTrailKML(String trailKML){this.trailKML = trailKML;}
     public String getConditionDesc(){
         return this.conditionDesc;
     }
@@ -168,5 +172,6 @@ public class Trail implements Parcelable {
         dest.writeString(trailName);
         dest.writeString(twitter);
         dest.writeString(updateFormatted);
+        dest.writeString(trailKML);
     }
 }

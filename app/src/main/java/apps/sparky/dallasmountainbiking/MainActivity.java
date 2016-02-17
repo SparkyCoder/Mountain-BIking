@@ -1,16 +1,11 @@
 package apps.sparky.dallasmountainbiking;
 
-import android.app.ActivityManager;
 import android.app.FragmentTransaction;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
@@ -22,18 +17,21 @@ import android.widget.CompoundButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.api.Status;
 
+import java.util.Date;
 import java.util.List;
+
 import apps.sparky.dallasmountainbiking.BLL.Exceptions.ExceptionHandling;
 import apps.sparky.dallasmountainbiking.BLL.Login.SignInActivity;
-import apps.sparky.dallasmountainbiking.BLL.Repositories.BackgroundServiceRepository;
+import apps.sparky.dallasmountainbiking.BLL.Repositories.CheckInRepository;
+import apps.sparky.dallasmountainbiking.BLL.Repositories.GetCheckInsRepository;
 import apps.sparky.dallasmountainbiking.BLL.Services.BackgroundService;
 import apps.sparky.dallasmountainbiking.BLL.Services.RepeatingIntent;
 import apps.sparky.dallasmountainbiking.BLL.Setup.MenuSetup;
 import apps.sparky.dallasmountainbiking.BLL.Setup.ToolbarSetup;
 import apps.sparky.dallasmountainbiking.DAL.DAO;
 import apps.sparky.dallasmountainbiking.Fragments.TrailsFragment;
+import apps.sparky.dallasmountainbiking.Objects.CheckIns;
 import apps.sparky.dallasmountainbiking.Objects.DmbUser;
 import apps.sparky.dallasmountainbiking.Objects.Favorites;
 import apps.sparky.dallasmountainbiking.Objects.SugarTrail;
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if(savedInstanceState != null && savedInstanceState.containsKey("trails"))
-            trails = (Trail[])savedInstanceState.getParcelableArray("trails");
+            trails = ParseParcelable(savedInstanceState.getParcelableArray("trails"));
         if (savedInstanceState != null && savedInstanceState.containsKey("favorites"))
             favoritesOn = savedInstanceState.getBoolean("favorites");
         if (savedInstanceState != null && savedInstanceState.containsKey("userID"))
@@ -187,6 +185,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private Trail[] ParseParcelable(Parcelable[] parcelables){
+        try {
+            Trail[] trails = new Trail[parcelables.length];
+            for (int i = 0; i < parcelables.length; i++) {
+                trails[i] = (Trail) parcelables[i];
+            }
+
+            return trails;
+        }
+        catch (Exception ex){
+            exceptionHandling.ShowToast("Error Converting Trails");
+            return  null;
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle savedState) {
         savedState.putBoolean("favorites", favoritesOn);
@@ -274,6 +287,11 @@ public class MainActivity extends AppCompatActivity {
                         menu.drawer.closeDrawers();
                         return true;
                     case R.id.trails:
+                        menu.drawer.closeDrawers();
+                        return true;
+                    case R.id.CheckInsMenuItem:
+                        Intent intent = new Intent(getApplicationContext(), apps.sparky.dallasmountainbiking.CheckIns.class);
+                        startActivity(intent);
                         menu.drawer.closeDrawers();
                         return true;
                     default:
